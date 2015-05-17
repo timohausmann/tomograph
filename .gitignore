@@ -1,0 +1,11 @@
+.DS_Store?
+.idea
+*.sass-cache
+*.cache
+*.swp
+*.swo
+*.sh
+tmp
+
+#node
+node_modules
