@@ -13,14 +13,44 @@
 	<script>(function(h){h.className = h.className.replace('no-js', 'js')})(document.documentElement)</script>
 
 <style>
-body {
-	margin: 20px;
-	text-align: center;
-}
-	canvas {
+	body {
+		margin: 20px;
+		text-align: center;
+		background: black;
+	}
+	/*canvas {
 		display: inline;
 		border: 1px solid #ccc;
 		margin: 20px;
+	}*/
+
+	#graph {
+
+		position: absolute;
+		width: 583px; /* x: 1040 */
+		height: 600px; /* z: 1070 */
+		left: 50%;
+		top: 50%;
+		margin-left: -291px;
+		margin-top: -300px;
+
+		position: relative;
+
+		transform: perspective(700px) rotateX(-114deg) rotateZ(137deg);
+		transform-style: preserve-3d;
+	}
+
+	#graph canvas {
+		position: absolute;
+		top: 0;
+		left: 0;
+		opacity: 0;
+		width: 583px; /* x: 1040 */
+		height: 600px; /* z: 1070 */
+		/*border: 1px solid rgba(255,255,255,0.2);*/
+
+		transform-origin: right center;
+		transition: opacity 0.2s;
 	}
 </style>
 
@@ -30,6 +60,7 @@ body {
 	<div id="graph"></div>
 
 	<script src="assets/js/data.js"></script>
+	<script src="assets/js/Vector.js"></script>
 	<script src="assets/js/Plane.js"></script>
 	<script src="assets/js/script.js"></script>
 	<script></script>
