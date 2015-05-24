@@ -1,7 +1,7 @@
 var 	myPlanes = [],
 
 		$graph = document.querySelector('#graph'),
-		graphSize = 600,
+		graphSize = 800,
 
 		//room boundaries inside data 
 		dataRange = {
@@ -15,6 +15,11 @@ var 	myPlanes = [],
 
 		currentTransform = new Vector(-24, 120);
 		targetTransform = new Vector(-24, 137);
+
+		$graph.style.width = graphSize;
+		$graph.style.height = graphSize;
+		$graph.style.marginLeft = -(graphSize/2);
+		$graph.style.marginTop = -(graphSize/2);
 ;
 
 		
@@ -32,12 +37,13 @@ var 	myPlanes = [],
 			var y = dataRange.y[0] + ((i/k) * dataRange.y[1]);
 			var z = dataRange.z[0] + ((i/k) * dataRange.z[1]);
 
-			myPlanes.push( new Plane(x,y,null) );
+			myPlanes.push( new Plane(null,y,null) );
 			myPlanes[i].scan();
 			myPlanes[i].draw();
 
-			myPlanes[i].canvas.style.transform = "translateZ(" + ((i-(k/2))*4) + "px)";
-			myPlanes[i].canvas.style.opacity = 1;
+			//myPlanes[i].canvas.style.transform = "translateZ(" + ((i-(k/2))*4) + "px)";
+			myPlanes[i].canvas.style.transform = "translateZ(0) rotateX(" + (i/k)*360 + "deg)";
+
 
 			(function() {
 				var currPlane = myPlanes[i];
