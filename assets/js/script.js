@@ -3,6 +3,15 @@ var 	myPlanes = [],
 		$graph = document.querySelector('#graph'),
 		graphSize = 800,
 
+		realWidth = 1040,
+		realDepth = 1070,
+		realHeight = 460,
+		scale = 0.75,
+
+		graphWidth = realWidth * scale,
+		graphDepth = realDepth * scale,
+		graphHeight = realHeight * scale,
+
 		//room boundaries inside data 
 		dataRange = {
 			x: [-30,115],
@@ -16,10 +25,10 @@ var 	myPlanes = [],
 		currentTransform = new Vector(-24, 120);
 		targetTransform = new Vector(-24, 137);
 
-		$graph.style.width = graphSize;
-		$graph.style.height = graphSize;
-		$graph.style.marginLeft = -(graphSize/2);
-		$graph.style.marginTop = -(graphSize/2);
+		$graph.style.width = graphWidth;
+		$graph.style.height = graphDepth;
+		$graph.style.marginLeft = -(graphWidth/2);
+		$graph.style.marginTop = -(graphDepth/2);
 ;
 
 		
@@ -30,7 +39,7 @@ var 	myPlanes = [],
 		
 		document.body.addEventListener('mousemove', handleMousemove);
 
-		var k = 64;
+		var k = 32;
 		for( var i=0; i<k;i++ ) {
 
 			var x = dataRange.x[0] + ((i/k) * dataRange.x[1]);
@@ -42,7 +51,8 @@ var 	myPlanes = [],
 			myPlanes[i].draw();
 
 			//myPlanes[i].canvas.style.transform = "translateZ(" + ((i-(k/2))*4) + "px)";
-			myPlanes[i].canvas.style.transform = "translateZ(0) rotateX(" + (i/k)*360 + "deg)";
+			myPlanes[i].canvas.style.transform = "translateZ(" + ((i-(k/2))/k)*graphHeight + "px)";
+			//myPlanes[i].canvas.style.transform = "translateZ(0) rotateX(" + (i/k)*360 + "deg)";
 
 
 			(function() {

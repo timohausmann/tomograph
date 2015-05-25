@@ -1,8 +1,8 @@
 function Plane(x, y, z) {
 
 	var canvas = document.createElement('canvas');
-	canvas.width = graphSize;
-	canvas.height = graphSize;
+	canvas.width = graphWidth;
+	canvas.height = graphDepth;
 
 	this.x = x;
 	this.y = y;
@@ -58,13 +58,13 @@ Plane.prototype = {
 			var y = curr.y - dataRange.y[0];
 			var z = curr.z - dataRange.z[0];
 
-			x = map(x, dataRange.x[1]);
-			y = map(y, dataRange.y[1]);
-			z = map(z, dataRange.z[1]);
+			x = (x / dataRange.x[1]) * graphWidth;
+			y = (y / dataRange.y[1]) * graphHeight;
+			z = (z / dataRange.z[1]) * graphDepth;
 
-			var w = map(curr.w, dataRange.x[1]);
-			var h = map(curr.h, dataRange.y[1]);
-			var d = map(curr.d, dataRange.z[1]);
+			var w = (curr.w / dataRange.x[1]) * graphWidth;
+			var h = (curr.h / dataRange.y[1]) * graphHeight;
+			var d = (curr.d / dataRange.z[1]) * graphDepth;
 
 			x -= (w/2);
 			y -= (h/2);
@@ -92,12 +92,6 @@ Plane.prototype = {
 				this.ctx.fillRect(x, y, w, h);
 				this.ctx.strokeRect(x, y, w, h);
 			} 
-		}
-
-
-		function map(local, bound) {
-
-			return (local/bound) * graphSize;
 		}
 	
 	}
