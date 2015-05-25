@@ -1,8 +1,4 @@
 var 	myPlanes = [],
-		xPlane,
-		yPlane,
-		zPlane,
-		i = 0,
 		samples = 256,
 
 		$graph = document.querySelector('#graph'),
@@ -11,7 +7,7 @@ var 	myPlanes = [],
 		realWidth = 1040,
 		realDepth = 1070,
 		realHeight = 460,
-		scale = 0.75,
+		scale = 0.55,
 
 		graphWidth = realWidth * scale,
 		graphDepth = realDepth * scale,
@@ -47,9 +43,12 @@ var 	myPlanes = [],
 			targetTransform = new Vector(-24, 137);
 		});*/
 
-		xPlane = new Plane('x', i);
-		yPlane = new Plane('y', i);
-		zPlane = new Plane('z', i);
+		for( var i=0; i<samples;i += samples/16 ) {
+
+			myPlanes.push( new Plane('x', i) );
+			myPlanes.push( new Plane('y', i) );
+			myPlanes.push( new Plane('z', i) );
+		}
 
 		/*var k = 32;
 		for( var i=0; i<k;i++ ) {
@@ -111,13 +110,13 @@ var 	myPlanes = [],
 		cssTransform = 'perspective(700px) scale(1) rotateX(' + (90 + parseFloat(currentTransform.x.toFixed(2)) ) + 'deg) rotateZ(' + currentTransform.y.toFixed(2) + 'deg) rotateY(0deg)';
 		$graph.style.transform = cssTransform;
 
-
+/*
 		i += 0.5;
 		if( i > samples ) i = 0;
 
 		xPlane.position(i);
 		yPlane.position(i);
-		zPlane.position(i);
+		zPlane.position(i);*/
 
 /*
 		var x = dataRange.x[0] + ((i/k) * dataRange.x[1]);
