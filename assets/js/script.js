@@ -1,4 +1,5 @@
-var 	myPlanes = [],
+var 	programs = {},
+		myPlanes = [],
 		samples = 256,
 		mouseEnabled = false,
 		$graph = document.querySelector('#graph'),
@@ -38,6 +39,47 @@ var 	myPlanes = [],
 		
 
 
+	programs.echo = {
+
+		init: function() {
+
+			$graph.classList.add('echo');
+
+			var k = 32;
+			for( var i=0; i<k;i++ ) {
+
+				var xPlane = new Plane('x', (i/k)*samples);
+				xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+				xPlane.position();
+				myPlanes.push( xPlane );
+
+				var zPlane = new Plane('z', (i/k)*samples);
+				zPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+				zPlane.position();
+				myPlanes.push( zPlane );
+			}
+		},
+
+		destroy: function() {
+
+			$graph.classList.remove('echo');
+		}
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	init = function() {
 
 		
@@ -49,24 +91,8 @@ var 	myPlanes = [],
 			targetTransform = new Vector(-24, 137);
 		});*/
 
-		var k = 32;
-		for( var i=0; i<k;i++ ) {
 
-			var xPlane = new Plane('x', (i/k)*samples);
-			xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
-			xPlane.position();
-			myPlanes.push( xPlane );
-
-			var zPlane = new Plane('z', (i/k)*samples);
-			zPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
-			zPlane.position();
-			myPlanes.push( zPlane );
-
-			/*var yPlane = new Plane('y', (i/k)*samples);
-			yPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
-			yPlane.position();
-			myPlanes.push( yPlane );*/
-		}
+		programs.echo.init();
 
 		/*var k = 32;
 		for( var i=0; i<k;i++ ) {

@@ -45,10 +45,13 @@
 
 		/*transform-origin: right center;*/
 		/*transition: opacity 0.5s;*/
-		-webkit-animation: fade 2s infinite;
 	}
 
-	@-webkit-keyframes fade {
+	.echo canvas {
+		-webkit-animation: echo 2s infinite;
+	}
+
+	@-webkit-keyframes echo {
 		0% {
 			opacity: 0;
 		}
