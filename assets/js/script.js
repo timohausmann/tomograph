@@ -1,4 +1,9 @@
 var 	myPlanes = [],
+		xPlane,
+		yPlane,
+		zPlane,
+		i = 0,
+		samples = 256,
 
 		$graph = document.querySelector('#graph'),
 		graphSize = 800,
@@ -16,7 +21,7 @@ var 	myPlanes = [],
 		dataRange = {
 			x: [-30,115],
 			y: [-48,50],
-			z: [60,-120]
+			z: [-60,120]
 		},
 
 		winWidth = window.innerWidth,
@@ -25,10 +30,10 @@ var 	myPlanes = [],
 		currentTransform = new Vector(-24, 120);
 		targetTransform = new Vector(-24, 137);
 
-		$graph.style.width = graphWidth;
-		$graph.style.height = graphDepth;
-		$graph.style.marginLeft = -(graphWidth/2);
-		$graph.style.marginTop = -(graphDepth/2);
+		//$graph.style.width = graphWidth;
+		//$graph.style.height = graphDepth;
+		//$graph.style.marginLeft = -(graphWidth/2);
+		//$graph.style.marginTop = -(graphDepth/2);
 ;
 
 		
@@ -38,8 +43,15 @@ var 	myPlanes = [],
 
 		
 		document.body.addEventListener('mousemove', handleMousemove);
+		/*document.body.addEventListener('mouseout', function() {
+			targetTransform = new Vector(-24, 137);
+		});*/
 
-		var k = 32;
+		xPlane = new Plane('x', i);
+		yPlane = new Plane('y', i);
+		zPlane = new Plane('z', i);
+
+		/*var k = 32;
 		for( var i=0; i<k;i++ ) {
 
 			var x = dataRange.x[0] + ((i/k) * dataRange.x[1]);
@@ -61,14 +73,14 @@ var 	myPlanes = [],
 					currPlane.canvas.style.opacity = 1;
 				}, i*100);
 			})();
-		}
+		}*/
 
 		updateCardTransform();
 	}
 
 	function handleMousemove(e) {
 
-		var 	mouseX = e.clientX,
+		var mouseX = e.clientX,
 			mouseY = e.clientY,
 			
 			offsetX = (mouseX-(winWidth/2)) / (winWidth/2),
@@ -84,20 +96,49 @@ var 	myPlanes = [],
 		targetTransform.y = rotationY;
 	}
 
+	
+
 
 	function updateCardTransform() {
 
-		var 	cssTransform,
+		var cssTransform,
 			appliedTransform = targetTransform.get();
 
 		appliedTransform.sub(currentTransform);
 		appliedTransform.mult(0.1);
 		currentTransform.add(appliedTransform);
 
-		//cssTransform = 'perspective(700px) scale(1) rotateX(' + (90 + parseFloat(currentTransform.x.toFixed(2))) + 'deg) rotateZ(' + currentTransform.y.toFixed(2) + 'deg)';
-		cssTransform = 'perspective(700px) scale(1) rotateX(' + (-90 + parseFloat(currentTransform.x.toFixed(2)) ) + 'deg) rotateZ(' + currentTransform.y.toFixed(2) + 'deg) rotateY(0deg)';
-
+		cssTransform = 'perspective(700px) scale(1) rotateX(' + (90 + parseFloat(currentTransform.x.toFixed(2)) ) + 'deg) rotateZ(' + currentTransform.y.toFixed(2) + 'deg) rotateY(0deg)';
 		$graph.style.transform = cssTransform;
+
+
+		i += 0.5;
+		if( i > samples ) i = 0;
+
+		xPlane.position(i);
+		yPlane.position(i);
+		zPlane.position(i);
+
+/*
+		var x = dataRange.x[0] + ((i/k) * dataRange.x[1]);
+		var y = dataRange.y[0] + ((i/k) * dataRange.y[1]);
+		var z = dataRange.z[0] + ((i/k) * dataRange.z[1]);
+		
+		xPlane.x = x;
+		yPlane.y = y;
+		zPlane.z = z;
+		
+		xPlane.scan();xPlane.draw();
+		yPlane.scan();yPlane.draw();
+		//zPlane.scan();zPlane.draw();
+
+		xPlane.canvas.style.transform = "rotateX(90deg) translateY("+ graphHeight / 1.5 +"px) translateZ(" + ((i-(k/2))/k)*-graphWidth + "px)";
+		yPlane.canvas.style.transform = "translateZ(" + ((i-(k/2))/k)*graphHeight + "px)";
+		zPlane.canvas.style.transform = "rotateY(90deg) translateX("+ graphHeight / 1.5 +"px) translateZ(" + ((i-(k/2))/k)*graphDepth + "px)";
+
+		i += 0.5;
+		if( i > k ) i = 0;
+*/
 
 		window.requestAnimationFrame(updateCardTransform);
 

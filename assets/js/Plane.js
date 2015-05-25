@@ -1,22 +1,72 @@
-function Plane(x, y, z) {
+function Plane(axis, index) {
 
 	var canvas = document.createElement('canvas');
-	canvas.width = graphWidth;
-	canvas.height = graphDepth;
 
-	this.x = x;
-	this.y = y;
-	this.z = z;
+	this.axis = axis;
+	this.index = index;
+	this.location = null;
 
 	this.canvas = canvas;
 	this.ctx = canvas.getContext('2d');
 	this.objects = [];
+	this.transform = {};
+
+	if( axis === 'x') {
+		canvas.width = graphDepth;
+		canvas.height = graphHeight;
+		this.transform.rotateX = '-90deg';
+		this.transform.rotateY = '-90deg';
+		//canvas.style.borderColor = "blue";
+
+	} else if( axis === 'y' ) {
+		canvas.width = graphWidth;
+		canvas.height = graphDepth;
+		//canvas.style.borderColor = "green";
+
+	} else if( axis === 'z') {
+		canvas.width = graphWidth;
+		canvas.height = graphHeight;
+		this.transform.rotateX = '-90deg';
+		//canvas.style.borderColor = "red";
+	}
+
+	canvas.style.marginLeft = -(canvas.width/2);
+	canvas.style.marginTop = -(canvas.height/2);
+
+	this.position();
 
 	$graph.appendChild(canvas);
 
 }
 
 Plane.prototype = {
+
+	position: function(index) {
+
+		this.index = index || this.index;
+
+		var centerOffset = (this.index - (samples/2)) / samples;
+		this.location = dataRange[this.axis][0] + ((this.index/samples) * dataRange[this.axis][1]);
+
+		if( this.axis === 'x') {
+			this.transform.translateZ = ( centerOffset * -graphWidth ) + 'px';
+
+		} else if( this.axis === 'y' ) {
+			this.transform.translateZ = ( centerOffset * -graphHeight ) + 'px';
+
+		} else if( this.axis === 'z') {
+			this.transform.translateZ = ( centerOffset * graphDepth ) + 'px';
+		}
+
+		var transform = '';
+		for( var key in this.transform ) {
+			transform += key + '(' + this.transform[key] + ') ';
+		}
+		this.canvas.style.transform = transform;
+
+		this.scan();
+		this.draw();
+	},
 
 	scan: function() {
 
@@ -27,14 +77,14 @@ Plane.prototype = {
 			var curr = data.shapes[i];
 
 			//detection strategy
-			if( ( (this.x !== null) &&
-					(curr.x - (curr.w/2) < this.x && curr.x + (curr.w/2) > this.x)
+			if( ( (this.axis === 'x') &&
+					(curr.x - (curr.w/2) < this.location && curr.x + (curr.w/2) > this.location)
 				) || (
-					(this.y !== null) &&
-					(curr.y - (curr.h/2) < this.y && curr.y + (curr.h/2) > this.y)
+					(this.axis === 'y') &&
+					(curr.y - (curr.h/2) < this.location && curr.y + (curr.h/2) > this.location)
 				) || (
-					(this.z !== null) &&
-					(curr.z - (curr.d/2) < this.z && curr.z + (curr.d/2) > this.z)
+					(this.axis === 'z') &&
+					(curr.z - (curr.d/2) < this.location && curr.z + (curr.d/2) > this.location)
 				) ) {
 
 				this.objects.push({
@@ -49,6 +99,8 @@ Plane.prototype = {
 		}
 	},
 	draw: function() {
+
+		this.ctx.clearRect(0,0,graphWidth, graphDepth);
 
 		for( var i=0; i<this.objects.length; i++ ) {
 
@@ -80,15 +132,15 @@ Plane.prototype = {
 			//this.ctx.fillStyle = "rgba(255,255,255,0.1)";
 			//this.ctx.strokeStyle = "rgba(255,255,255,0)";
 
-			if( this.x !== null ) {
+			if( this.axis === 'x' ) {
 				this.ctx.fillRect(z, y, d, h);
 				this.ctx.strokeRect(z, y, d, h);
 			}
-			if( this.y !== null ) {
+			if( this.axis === 'y' ) {
 				this.ctx.fillRect(x, z, w, d);
 				this.ctx.strokeRect(x, z, w, d);
 			}
-			if( this.z !== null ) {
+			if( this.axis === 'z' ) {
 				this.ctx.fillRect(x, y, w, h);
 				this.ctx.strokeRect(x, y, w, h);
 			} 
