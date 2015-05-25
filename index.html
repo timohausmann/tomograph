@@ -59,12 +59,41 @@
 			opacity: 0;
 		}
 	}
+
+	#ctrl {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		background: black;
+		overflow: hidden;
+		padding: 4px;
+		font-size: 10px;
+		line-height: 24px;
+		color: white;
+		text-transform: uppercase;
+	}
+	#ctrl * {
+		float: left;
+		margin-right: 10px;
+	}
 </style>
 
 </head>
 <body>
 
 	<div id="graph"></div>
+
+	<div id="ctrl">
+		<input type="checkbox" id="ctrl_mouse" title="enable mouse" /> <label>enable mouse</label>
+		<input type="checkbox" id="ctrl_autorun" title="autorun" /> <label>autorun</label>
+		<ul>
+			<li>grid</li>
+			<li>echoe</li>
+			<li>twist</li>
+			<li>circle</li>
+		</ul>
+	</div>
 
 	<script src="assets/js/data.js"></script>
 	<script src="assets/js/Vector.js"></script>

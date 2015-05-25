@@ -1,6 +1,6 @@
 var 	myPlanes = [],
 		samples = 256,
-
+		mouseEnabled = false,
 		$graph = document.querySelector('#graph'),
 		graphSize = 800,
 
@@ -8,6 +8,9 @@ var 	myPlanes = [],
 		realDepth = 1070,
 		realHeight = 460,
 		scale = 0.7,
+
+		mouseRangeX = 180,
+		mouseRangeY = 45,
 
 		graphWidth = realWidth * scale,
 		graphDepth = realDepth * scale,
@@ -39,6 +42,9 @@ var 	myPlanes = [],
 
 		
 		document.body.addEventListener('mousemove', handleMousemove);
+		document.querySelector('#ctrl_mouse').addEventListener('click', function() {
+			mouseEnabled = !mouseEnabled;
+		});
 		/*document.body.addEventListener('mouseout', function() {
 			targetTransform = new Vector(-24, 137);
 		});*/
@@ -91,17 +97,16 @@ var 	myPlanes = [],
 
 	function handleMousemove(e) {
 
+		if( !mouseEnabled ) return;
+
 		var mouseX = e.clientX,
 			mouseY = e.clientY,
 			
 			offsetX = (mouseX-(winWidth/2)) / (winWidth/2),
 			offsetY = (mouseY-(winHeight/2)) / (winHeight/2),
 
-			rangeX = 180,
-			rangeY = 45,
-
-			rotationX = parseFloat((offsetY*rangeY).toFixed(2)),
-			rotationY = -(offsetX*rangeX).toFixed(2);
+			rotationX = parseFloat((offsetY*mouseRangeY).toFixed(2)),
+			rotationY = -(offsetX*mouseRangeX).toFixed(2);
 
 		targetTransform.x = rotationX;
 		targetTransform.y = rotationY;
@@ -112,14 +117,34 @@ var 	myPlanes = [],
 
 	function updateCardTransform() {
 
+		if( !mouseEnabled ) {
+			targetTransform.x = -24;
+			targetTransform.y += 0.1;
+		}
+
 		var cssTransform,
 			appliedTransform = targetTransform.get();
+
+
+
 
 		appliedTransform.sub(currentTransform);
 		appliedTransform.mult(0.1);
 		currentTransform.add(appliedTransform);
 
-		cssTransform = 'perspective(700px) scale(1) rotateX(' + (90 + parseFloat(currentTransform.x.toFixed(2)) ) + 'deg) rotateZ(' + currentTransform.y.toFixed(2) + 'deg) rotateY(0deg)';
+		var yIndex = (currentTransform.x) / mouseRangeY;
+
+		var transform = {
+			perspective: '700px',
+			translateY: yIndex * graphHeight/2 + 'px' ,
+			rotateX: (90 + parseFloat(currentTransform.x.toFixed(2)) ) + 'deg',
+			rotateZ: currentTransform.y.toFixed(2) + 'deg'
+		};
+
+		var cssTransform = '';
+		for( var key in transform ) {
+			cssTransform += key + '(' + transform[key] + ') ';
+		}
 		$graph.style.transform = cssTransform;
 
 /*
