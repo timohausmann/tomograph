@@ -4,8 +4,6 @@ var programs = (function(programs) {
 
 		init: function() {
 
-			console.log('init', myPlanes);
-
 			var k = 32;
 			for( var i=0; i<k;i++ ) {
 

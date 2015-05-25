@@ -4,6 +4,7 @@ function Plane(axis, index) {
 
 	this.axis = axis;
 	this.index = index;
+	this.isFixed = true;
 	this.location = null;
 
 	this.canvas = canvas;
@@ -43,17 +44,21 @@ Plane.prototype = {
 
 		this.index = index || this.index;
 
-		var centerOffset = (this.index - (samples/2)) / samples;
-		this.location = dataRange[this.axis][0] + ((this.index/samples) * dataRange[this.axis][1]);
+		var centerOffset = this.index - 0.5;
 
-		if( this.axis === 'x') {
-			this.transform.translateZ = ( centerOffset * -graphWidth ) + 'px';
+		this.location = dataRange[this.axis][0] + (this.index * dataRange[this.axis][1]);
 
-		} else if( this.axis === 'y' ) {
-			this.transform.translateZ = ( centerOffset * -graphHeight ) + 'px';
+		if( this.isFixed ) {
 
-		} else if( this.axis === 'z') {
-			this.transform.translateZ = ( centerOffset * graphDepth ) + 'px';
+			if( this.axis === 'x') {
+				this.transform.translateZ = ( centerOffset * -graphWidth ) + 'px';
+
+			} else if( this.axis === 'y' ) {
+				this.transform.translateZ = ( centerOffset * -graphHeight ) + 'px';
+
+			} else if( this.axis === 'z') {
+				this.transform.translateZ = ( centerOffset * graphDepth ) + 'px';
+			}
 		}
 
 		var transform = '';
@@ -127,8 +132,11 @@ Plane.prototype = {
 			//this.ctx.fillStyle = "rgba(255,255,255,0)";
 			//this.ctx.strokeStyle = "rgba(255,255,255,1)";
 
-			this.ctx.fillStyle = "rgba(255,255,255,0.25)";
-			this.ctx.strokeStyle = "rgba(0,204,255,0)";
+			this.ctx.fillStyle = activeProgram.fill;
+			this.ctx.strokeStyle = activeProgram.stroke;
+
+			//this.ctx.fillStyle = "rgba(255,255,255,0.25)";
+			//this.ctx.strokeStyle = "rgba(0,204,255,0)";
 
 			if( this.axis === 'x' ) {
 				this.ctx.fillRect(z, y, d, h);

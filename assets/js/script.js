@@ -1,6 +1,7 @@
 var 	programs = {},
+		activeProgram = null,
 		myPlanes = [],
-		samples = 256,
+		//samples = 256,
 		mouseEnabled = false,
 		$graph = document.querySelector('#graph'),
 		graphSize = 800,
@@ -8,7 +9,7 @@ var 	programs = {},
 		realWidth = 1040,
 		realDepth = 1070,
 		realHeight = 460,
-		scale = 0.7,
+		scale = 0.75,
 
 		mouseRangeX = 180,
 		mouseRangeY = 45,
@@ -39,7 +40,27 @@ var 	programs = {},
 		
 
 
+
+	init = function() {
+
+		
+		document.body.addEventListener('mousemove', handleMousemove);
+		document.querySelector('#ctrl_mouse').addEventListener('click', function() {
+			mouseEnabled = !mouseEnabled;
+		});
+
+
+		activeProgram = programs.vertigo;
+		activeProgram.init();
+
+		loop();
+	}
+
+
 	programs.echo = {
+
+		fill: 'rgba(255,255,255,0.25)',
+		stroke: 'rgba(255,255,255,0)',
 
 		init: function() {
 
@@ -48,12 +69,12 @@ var 	programs = {},
 			var k = 32;
 			for( var i=0; i<k;i++ ) {
 
-				var xPlane = new Plane('x', (i/k)*samples);
+				var xPlane = new Plane('x', (i/k));
 				xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
 				xPlane.position();
 				myPlanes.push( xPlane );
 
-				var zPlane = new Plane('z', (i/k)*samples);
+				var zPlane = new Plane('z', (i/k));
 				zPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
 				zPlane.position();
 				myPlanes.push( zPlane );
@@ -63,6 +84,145 @@ var 	programs = {},
 		destroy: function() {
 
 			$graph.classList.remove('echo');
+		}
+	};
+
+	programs.grid = {
+
+		fill: 'rgba(255,255,255,0)',
+		stroke: 'rgba(255,255,255,1)',
+
+		init: function() {
+
+			$graph.classList.add('grid');
+
+			var k = 8;
+			for( var i=0; i<k;i++ ) {
+
+				var xPlane = new Plane('x', (i/k));
+				xPlane.position();
+				xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+				myPlanes.push( xPlane );
+
+				var yPlane = new Plane('y', (i/k));
+				yPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+				yPlane.position();
+				myPlanes.push( yPlane );
+
+				var zPlane = new Plane('z', (i/k));
+				zPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+				zPlane.position();
+				myPlanes.push( zPlane );
+			}
+		}
+	};
+
+
+	programs.simplescan = {
+
+		fill: 'rgba(255,255,255,1)',
+		stroke: 'rgba(255,255,255,1)',
+
+		init: function() {
+
+			$graph.classList.add('scan');
+
+			var k = 1;
+			for(var i=0; i<k; i++) {
+				var xPlane = new Plane('x', i/k);
+				xPlane.position();
+				myPlanes.push( xPlane );
+
+				var yPlane = new Plane('y', i/k);
+				yPlane.position();
+				myPlanes.push( yPlane );
+
+				var zPlane = new Plane('z', i/k);
+				zPlane.position();
+				myPlanes.push( zPlane );
+			}
+		},
+
+		loop: function() {
+
+			for(var i=0; i<myPlanes.length; i++) {
+
+				myPlanes[i].index += 0.001;
+				myPlanes[i].position();
+				if( myPlanes[i].index > 1 ) myPlanes[i].index = 0;
+			}
+		}
+	};
+
+	programs.vertigo = {
+
+		fill: 'rgba(255,255,255,1)',
+		stroke: 'rgba(255,255,255,1)',
+
+		init: function() {
+
+			var k = 4;
+			for(var i=0; i<k; i++) {
+
+				var yPlane = new Plane('y', i/k);
+				yPlane.position();
+				myPlanes.push( yPlane );
+			}
+		},
+
+		loop: function() {
+
+			for(var i=0; i<myPlanes.length; i++) {
+
+				myPlanes[i].index -= 0.001;
+				myPlanes[i].position();
+				if( myPlanes[i].index < 0 ) myPlanes[i].index = 1;
+			}
+		}
+	};
+
+
+	programs.circleY = {
+
+		fill: 'rgba(255,255,255,0)',
+		stroke: 'rgba(255,255,255,1)',
+
+		init: function() {
+
+			//$graph.classList.add('echo');
+
+			var k = 32;
+			for( var i=0; i<k;i++ ) {
+
+				var xPlane = new Plane('y', (i/k));
+				xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+				xPlane.isFixed = false;
+				xPlane.transform.rotateX = -180 - ((i/k) * 360) + 'deg';
+				xPlane.position();
+				myPlanes.push( xPlane );
+			}
+		}
+	};
+
+
+	programs.circleZ = {
+
+		fill: 'rgba(255,255,255,0)',
+		stroke: 'rgba(255,255,255,1)',
+
+		init: function() {
+
+			var k = 64;
+			for( var i=0; i<k;i++ ) {
+
+				var xPlane = new Plane('z', (i/k));
+				xPlane.isFixed = false;
+				
+				xPlane.transform.rotateY = ((i/k) * 220) + 'deg';
+				xPlane.transform.scale = 1.1;
+				xPlane.position();
+				myPlanes.push( xPlane );
+			}
 		}
 	};
 
@@ -77,49 +237,6 @@ var 	programs = {},
 
 
 
-
-
-
-	init = function() {
-
-		
-		document.body.addEventListener('mousemove', handleMousemove);
-		document.querySelector('#ctrl_mouse').addEventListener('click', function() {
-			mouseEnabled = !mouseEnabled;
-		});
-		/*document.body.addEventListener('mouseout', function() {
-			targetTransform = new Vector(-24, 137);
-		});*/
-
-
-		programs.echo.init();
-
-		/*var k = 32;
-		for( var i=0; i<k;i++ ) {
-
-			var x = dataRange.x[0] + ((i/k) * dataRange.x[1]);
-			var y = dataRange.y[0] + ((i/k) * dataRange.y[1]);
-			var z = dataRange.z[0] + ((i/k) * dataRange.z[1]);
-
-			myPlanes.push( new Plane(null,y,null) );
-			myPlanes[i].scan();
-			myPlanes[i].draw();
-
-			//myPlanes[i].canvas.style.transform = "translateZ(" + ((i-(k/2))*4) + "px)";
-			myPlanes[i].canvas.style.transform = "translateZ(" + ((i-(k/2))/k)*graphHeight + "px)";
-			//myPlanes[i].canvas.style.transform = "translateZ(0) rotateX(" + (i/k)*360 + "deg)";
-
-
-			(function() {
-				var currPlane = myPlanes[i];
-				window.setTimeout(function() {
-					currPlane.canvas.style.opacity = 1;
-				}, i*100);
-			})();
-		}*/
-
-		updateCardTransform();
-	}
 
 	function handleMousemove(e) {
 
@@ -202,12 +319,16 @@ var 	programs = {},
 		if( i > k ) i = 0;
 */
 
-		window.requestAnimationFrame(updateCardTransform);
-
 		//console.log( $graph.style.transform );
 	}
 
 	function loop() {
+
+		if( typeof activeProgram.loop === 'function' ) {
+			activeProgram.loop();
+		}
+
+		updateCardTransform();
 
 		/*var now = new Date();
 
@@ -223,8 +344,8 @@ var 	programs = {},
 		}
 
 		stats.end();
-
-		window.requestAnimationFrame( loop );*/
+*/
+		window.requestAnimationFrame( loop );
 
 	}
 
