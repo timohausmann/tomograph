@@ -7,7 +7,7 @@ var 	myPlanes = [],
 		realWidth = 1040,
 		realDepth = 1070,
 		realHeight = 460,
-		scale = 0.55,
+		scale = 0.7,
 
 		graphWidth = realWidth * scale,
 		graphDepth = realDepth * scale,
@@ -43,11 +43,23 @@ var 	myPlanes = [],
 			targetTransform = new Vector(-24, 137);
 		});*/
 
-		for( var i=0; i<samples;i += samples/16 ) {
+		var k = 32;
+		for( var i=0; i<k;i++ ) {
 
-			myPlanes.push( new Plane('x', i) );
-			myPlanes.push( new Plane('y', i) );
-			myPlanes.push( new Plane('z', i) );
+			var xPlane = new Plane('x', (i/k)*samples);
+			xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+			xPlane.position();
+			myPlanes.push( xPlane );
+
+			var zPlane = new Plane('z', (i/k)*samples);
+			zPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+			zPlane.position();
+			myPlanes.push( zPlane );
+
+			/*var yPlane = new Plane('y', (i/k)*samples);
+			yPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+			yPlane.position();
+			myPlanes.push( yPlane );*/
 		}
 
 		/*var k = 32;

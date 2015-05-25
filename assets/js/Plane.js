@@ -33,8 +33,6 @@ function Plane(axis, index) {
 	canvas.style.marginLeft = -(canvas.width/2);
 	canvas.style.marginTop = -(canvas.height/2);
 
-	this.position();
-
 	$graph.appendChild(canvas);
 
 }
@@ -126,11 +124,11 @@ Plane.prototype = {
 			//this.ctx.fillStyle = "white";
 			//this.ctx.strokeStyle = "black";
 			
-			this.ctx.fillStyle = "rgba(255,255,255,0)";
-			this.ctx.strokeStyle = "rgba(255,255,255,1)";
+			//this.ctx.fillStyle = "rgba(255,255,255,0)";
+			//this.ctx.strokeStyle = "rgba(255,255,255,1)";
 
-			//this.ctx.fillStyle = "rgba(255,255,255,0.1)";
-			//this.ctx.strokeStyle = "rgba(255,255,255,0)";
+			this.ctx.fillStyle = "rgba(255,255,255,0.25)";
+			this.ctx.strokeStyle = "rgba(0,204,255,0)";
 
 			if( this.axis === 'x' ) {
 				this.ctx.fillRect(z, y, d, h);

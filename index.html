@@ -40,11 +40,24 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		/*opacity: 0;*/
+		opacity: 0;
 		/*border: 1px solid rgba(255,255,255,0.8);*/
 
 		/*transform-origin: right center;*/
-		transition: opacity 0.5s;
+		/*transition: opacity 0.5s;*/
+		-webkit-animation: fade 2s infinite;
+	}
+
+	@-webkit-keyframes fade {
+		0% {
+			opacity: 0;
+		}
+		33% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+		}
 	}
 </style>
 
