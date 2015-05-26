@@ -15,20 +15,17 @@ function Plane(axis, index) {
 	if( axis === 'x') {
 		canvas.width = graphDepth;
 		canvas.height = graphHeight;
-		this.transform.rotateX = '-90deg';
-		this.transform.rotateY = '-90deg';
-		//canvas.style.borderColor = "blue";
+		this.transform.rotateX = -90;
+		this.transform.rotateY = -90;
 
 	} else if( axis === 'y' ) {
 		canvas.width = graphWidth;
 		canvas.height = graphDepth;
-		//canvas.style.borderColor = "green";
 
 	} else if( axis === 'z') {
 		canvas.width = graphWidth;
 		canvas.height = graphHeight;
-		this.transform.rotateX = '-90deg';
-		//canvas.style.borderColor = "red";
+		this.transform.rotateX = -90;
 	}
 
 	canvas.style.marginLeft = -(canvas.width/2);
@@ -51,20 +48,26 @@ Plane.prototype = {
 		if( this.isFixed ) {
 
 			if( this.axis === 'x') {
-				this.transform.translateZ = ( centerOffset * -graphWidth ) + 'px';
+				this.transform.translateZ = centerOffset * -graphWidth;
 
 			} else if( this.axis === 'y' ) {
-				this.transform.translateZ = ( centerOffset * -graphHeight ) + 'px';
+				this.transform.translateZ = centerOffset * -graphHeight;
 
 			} else if( this.axis === 'z') {
-				this.transform.translateZ = ( centerOffset * graphDepth ) + 'px';
+				this.transform.translateZ = centerOffset * graphDepth;
 			}
 		}
 
 		var transform = '';
 		for( var key in this.transform ) {
-			transform += key + '(' + this.transform[key] + ') ';
+
+			var unit = '';
+			if( key.indexOf('rotate') !== -1 ) unit = 'deg';
+			if( key.indexOf('translate') !== -1 ) unit = 'px';
+
+			transform += key + '(' + this.transform[key] + unit + ') ';
 		}
+
 		this.canvas.style.transform = transform;
 
 		this.scan();
@@ -124,20 +127,9 @@ Plane.prototype = {
 			x -= (w/2);
 			y -= (h/2);
 			z -= (d/2);
-			
-
-			//this.ctx.fillStyle = "white";
-			//this.ctx.strokeStyle = "black";
-			
-			//this.ctx.fillStyle = "rgba(255,255,255,0)";
-			//this.ctx.strokeStyle = "rgba(255,255,255,1)";
 
 			this.ctx.fillStyle = activeProgram.fill;
 			this.ctx.strokeStyle = activeProgram.stroke;
-
-			//this.ctx.fillStyle = "rgba(255,255,255,0.25)";
-			//this.ctx.strokeStyle = "rgba(0,204,255,0)";
-
 			if( this.axis === 'x' ) {
 				this.ctx.fillRect(z, y, d, h);
 				this.ctx.strokeRect(z, y, d, h);

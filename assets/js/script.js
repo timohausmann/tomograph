@@ -1,4 +1,5 @@
 var 	programs = {},
+		activeIndex = 0,
 		activeProgram = null,
 		myPlanes = [],
 		//samples = 256,
@@ -41,190 +42,264 @@ var 	programs = {},
 
 
 
-	init = function() {
-
+	function init() {
 		
 		document.body.addEventListener('mousemove', handleMousemove);
 		document.querySelector('#ctrl_mouse').addEventListener('click', function() {
 			mouseEnabled = !mouseEnabled;
 		});
 
+		for(var i=0; i<programs.length; i++ ) {
 
-		activeProgram = programs.vertigo;
-		activeProgram.init();
+			var li = document.createElement('li');
+			li.setAttribute('id', programs[i].name);
+			li.innerHTML = programs[i].name;
 
+			document.querySelector('#ctrl_program').appendChild(li);
+		}
+		
+
+		
+
+
+		
+		next();
 		loop();
 	}
 
 
-	programs.echo = {
+	function next() {
 
-		fill: 'rgba(255,255,255,0.25)',
-		stroke: 'rgba(255,255,255,0)',
+		myPlanes = [];
+		$graph.innerHTML = '';
 
-		init: function() {
+		if( activeProgram !== null ) {
+			$graph.classList.remove( activeProgram.name );
+			document.querySelector('#' + activeProgram.name).classList.remove('active');
+		}
 
-			$graph.classList.add('echo');
+		activeProgram = programs[activeIndex];
+		activeProgram.init();
+		$graph.classList.add( activeProgram.name );
 
-			var k = 32;
-			for( var i=0; i<k;i++ ) {
+		document.querySelector('#' + activeProgram.name).classList.add('active');
 
-				var xPlane = new Plane('x', (i/k));
-				xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
-				xPlane.position();
-				myPlanes.push( xPlane );
+		activeIndex += 1;
+		if( activeIndex > programs.length - 1 ) activeIndex = 0;
 
-				var zPlane = new Plane('z', (i/k));
-				zPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
-				zPlane.position();
-				myPlanes.push( zPlane );
+		window.setTimeout(next, 15000);
+	}
+
+
+
+
+
+	programs = [
+		
+		{
+			name: 'echo',
+			fill: 'rgba(255,255,255,0.25)',
+			stroke: 'rgba(255,255,255,0)',
+
+			init: function() {
+
+				var k = 32;
+				for( var i=0; i<k;i++ ) {
+
+					var xPlane = new Plane('x', (i/k));
+					xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+					xPlane.position();
+					myPlanes.push( xPlane );
+
+					var zPlane = new Plane('z', (i/k));
+					zPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+					zPlane.position();
+					myPlanes.push( zPlane );
+				}
 			}
 		},
 
-		destroy: function() {
+		{
 
-			$graph.classList.remove('echo');
-		}
-	};
+			name: 'scan',
+			fill: 'rgba(255,255,255,1)',
+			stroke: 'rgba(255,255,255,1)',
 
-	programs.grid = {
+			init: function() {
 
-		fill: 'rgba(255,255,255,0)',
-		stroke: 'rgba(255,255,255,1)',
+				var k = 1;
+				for(var i=0; i<k; i++) {
+					var xPlane = new Plane('x', i/k);
+					xPlane.position();
+					myPlanes.push( xPlane );
 
-		init: function() {
+					var yPlane = new Plane('y', i/k);
+					yPlane.position();
+					myPlanes.push( yPlane );
 
-			$graph.classList.add('grid');
+					var zPlane = new Plane('z', i/k);
+					zPlane.position();
+					myPlanes.push( zPlane );
+				}
+			},
 
-			var k = 8;
-			for( var i=0; i<k;i++ ) {
+			loop: function() {
 
-				var xPlane = new Plane('x', (i/k));
-				xPlane.position();
-				xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
-				myPlanes.push( xPlane );
+				for(var i=0; i<myPlanes.length; i++) {
 
-				var yPlane = new Plane('y', (i/k));
-				yPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
-				yPlane.position();
-				myPlanes.push( yPlane );
-
-				var zPlane = new Plane('z', (i/k));
-				zPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
-				zPlane.position();
-				myPlanes.push( zPlane );
-			}
-		}
-	};
-
-
-	programs.simplescan = {
-
-		fill: 'rgba(255,255,255,1)',
-		stroke: 'rgba(255,255,255,1)',
-
-		init: function() {
-
-			$graph.classList.add('scan');
-
-			var k = 1;
-			for(var i=0; i<k; i++) {
-				var xPlane = new Plane('x', i/k);
-				xPlane.position();
-				myPlanes.push( xPlane );
-
-				var yPlane = new Plane('y', i/k);
-				yPlane.position();
-				myPlanes.push( yPlane );
-
-				var zPlane = new Plane('z', i/k);
-				zPlane.position();
-				myPlanes.push( zPlane );
+					myPlanes[i].index += 0.001;
+					myPlanes[i].position();
+					if( myPlanes[i].index > 1 ) myPlanes[i].index = 0;
+				}
 			}
 		},
 
-		loop: function() {
+		{
 
-			for(var i=0; i<myPlanes.length; i++) {
+			name: 'grid',
+			fill: 'rgba(255,255,255,0)',
+			stroke: 'rgba(255,255,255,1)',
 
-				myPlanes[i].index += 0.001;
-				myPlanes[i].position();
-				if( myPlanes[i].index > 1 ) myPlanes[i].index = 0;
+			init: function() {
+
+				var k = 8;
+				for( var i=0; i<k;i++ ) {
+
+					var xPlane = new Plane('x', (i/k));
+					xPlane.position();
+					xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+					myPlanes.push( xPlane );
+
+					var yPlane = new Plane('y', (i/k));
+					yPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+					yPlane.position();
+					myPlanes.push( yPlane );
+
+					var zPlane = new Plane('z', (i/k));
+					zPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+					zPlane.position();
+					myPlanes.push( zPlane );
+				}
 			}
-		}
-	};
+		},
+		{
 
-	programs.vertigo = {
+			name: 'vertigo',
+			fill: 'rgba(255,255,255,1)',
+			stroke: 'rgba(255,255,255,1)',
 
-		fill: 'rgba(255,255,255,1)',
-		stroke: 'rgba(255,255,255,1)',
+			init: function() {
 
-		init: function() {
+				var k = 4;
+				for(var i=0; i<k; i++) {
 
-			var k = 4;
-			for(var i=0; i<k; i++) {
+					var yPlane = new Plane('y', i/k);
+					yPlane.position();
+					myPlanes.push( yPlane );
+				}
+			},
 
-				var yPlane = new Plane('y', i/k);
-				yPlane.position();
-				myPlanes.push( yPlane );
+			loop: function() {
+
+				for(var i=0; i<myPlanes.length; i++) {
+
+					myPlanes[i].index -= 0.001;
+					myPlanes[i].position();
+					if( myPlanes[i].index < 0 ) myPlanes[i].index = 1;
+				}
 			}
 		},
 
-		loop: function() {
+		{
+			name: 'stretch',
+			fill: 'rgba(255,255,255,0.25)',
+			stroke: 'rgba(255,255,255,0)',
 
-			for(var i=0; i<myPlanes.length; i++) {
+			init: function() {
 
-				myPlanes[i].index -= 0.001;
-				myPlanes[i].position();
-				if( myPlanes[i].index < 0 ) myPlanes[i].index = 1;
+				var k = 32;
+				for( var i=0; i<k;i++ ) {
+
+					var yPlane = new Plane('y', (i/k));
+					yPlane.isFixed = false;
+					yPlane.transform.translateZ = 0;// ((i/k)-0.5) * -graphHeight*2;
+					yPlane.position();
+					myPlanes.push( yPlane );
+				}
+			},
+
+			loop: function() {
+
+				for(var i=0; i<myPlanes.length; i++) {
+
+					myPlanes[i].transform.translateZ -= (myPlanes[i].index-0.5)*2;
+					myPlanes[i].position();
+				}
+			}
+		},
+
+		{
+
+			name: 'circleY',
+			fill: 'rgba(255,255,255,0)',
+			stroke: 'rgba(255,255,255,1)',
+
+			init: function() {
+
+				targetTransform = new Vector(-24, 137);
+
+				var k = 32;
+				for( var i=0; i<k;i++ ) {
+
+					var xPlane = new Plane('y', (i/k));
+					xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+					xPlane.isFixed = false;
+					xPlane.transform.rotateX = -180 - ((i/k) * 360);
+					xPlane.position();
+					myPlanes.push( xPlane );
+				}
+			},
+
+			loop: function() {
+
+				for(var i=0; i<myPlanes.length; i++) {
+					//myPlanes[i].transform.rotateX += myPlanes[i].index;
+					myPlanes[i].transform.rotateX += 0.5;
+					myPlanes[i].position();
+				}
+			}
+		}, 
+
+		{
+
+			name: 'circleZ',
+			fill: 'rgba(255,255,255,0)',
+			stroke: 'rgba(255,255,255,1)',
+
+			init: function() {
+
+				var k = 64;
+				for( var i=0; i<k;i++ ) {
+
+					var xPlane = new Plane('z', (i/k));
+					xPlane.isFixed = false;
+					
+					xPlane.transform.rotateY = (i/k) * 90;
+					xPlane.transform.scale = 1.1;
+					xPlane.position();
+					myPlanes.push( xPlane );
+				}
+			},
+
+			loop: function() {
+
+				for(var i=0; i<myPlanes.length; i++) {
+					myPlanes[i].transform.rotateY += myPlanes[i].index;
+					myPlanes[i].position();
+				}
 			}
 		}
-	};
-
-
-	programs.circleY = {
-
-		fill: 'rgba(255,255,255,0)',
-		stroke: 'rgba(255,255,255,1)',
-
-		init: function() {
-
-			//$graph.classList.add('echo');
-
-			var k = 32;
-			for( var i=0; i<k;i++ ) {
-
-				var xPlane = new Plane('y', (i/k));
-				xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
-				xPlane.isFixed = false;
-				xPlane.transform.rotateX = -180 - ((i/k) * 360) + 'deg';
-				xPlane.position();
-				myPlanes.push( xPlane );
-			}
-		}
-	};
-
-
-	programs.circleZ = {
-
-		fill: 'rgba(255,255,255,0)',
-		stroke: 'rgba(255,255,255,1)',
-
-		init: function() {
-
-			var k = 64;
-			for( var i=0; i<k;i++ ) {
-
-				var xPlane = new Plane('z', (i/k));
-				xPlane.isFixed = false;
-				
-				xPlane.transform.rotateY = ((i/k) * 220) + 'deg';
-				xPlane.transform.scale = 1.1;
-				xPlane.position();
-				myPlanes.push( xPlane );
-			}
-		}
-	};
+	];
 
 
 
