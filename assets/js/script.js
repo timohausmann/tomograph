@@ -45,11 +45,18 @@ var 	programs = {},
 
 		
 
-
-
 	function init() {
 		
 		document.body.addEventListener('mousemove', handleMousemove);
+
+		/*document.body.addEventListener("mousewheel", MouseWheelHandler, false);
+		document.body.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
+
+		function MouseWheelHandler(e) {
+			var delta = e.detail ? e.detail : -e.wheelDelta/120;
+			zoom += delta/10;
+		}*/
+		//window.onscroll = ;
 		document.querySelector('#ctrl_mouse').addEventListener('click', function() {
 			mouseEnabled = !mouseEnabled;
 			if( mouseEnabled ) {
@@ -90,8 +97,6 @@ var 	programs = {},
 
 
 	function next() {
-
-		var 
 
 		myPlanes = [];
 		$graph.innerHTML = '';
@@ -424,9 +429,6 @@ var 	programs = {},
 		var cssTransform,
 			appliedTransform = targetTransform.get();
 
-
-
-
 		appliedTransform.sub(currentTransform);
 		appliedTransform.mult(0.1);
 		currentTransform.add(appliedTransform);
@@ -474,8 +476,6 @@ var 	programs = {},
 		i += 0.5;
 		if( i > k ) i = 0;
 */
-
-		//console.log( $graph.style.transform );
 	}
 
 	function loop() {
@@ -485,24 +485,7 @@ var 	programs = {},
 		}
 
 		updateCardTransform();
-
-		/*var now = new Date();
-
-		stats.begin();		
-
-		ctx.clearRect(0, 0, canvas.width, canvas.height );
-
-		for( var i=0; i<myNodes.length; i++ ) {
-
-			
-			myNodes[i].update();
-			myNodes[i].draw( ctx );
-		}
-
-		stats.end();
-*/
 		window.requestAnimationFrame( loop );
-
 	}
 
 
