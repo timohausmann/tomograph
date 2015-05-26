@@ -115,7 +115,7 @@ var 	programs = {},
 		activeIndex += 1;
 		if( activeIndex > programs.length - 1 ) activeIndex = 0;
 
-		nextTimeout = window.setTimeout(next, timeout);
+		if( isAutorun ) nextTimeout = window.setTimeout(next, timeout);
 	}
 
 
