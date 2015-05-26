@@ -1,5 +1,5 @@
 var 	programs = {},
-		activeIndex = 4,
+		activeIndex = 0,
 		activeProgram = null,
 		myPlanes = [],
 		//samples = 256,
@@ -47,6 +47,11 @@ var 	programs = {},
 		document.body.addEventListener('mousemove', handleMousemove);
 		document.querySelector('#ctrl_mouse').addEventListener('click', function() {
 			mouseEnabled = !mouseEnabled;
+			if( mouseEnabled ) {
+				this.classList.add('active');
+			} else {
+				this.classList.remove('active');
+			}
 		});
 
 		for(var i=0; i<programs.length; i++ ) {
@@ -108,11 +113,13 @@ var 	programs = {},
 
 					var xPlane = new Plane('x', (i/k));
 					xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+					xPlane.canvas.style.animationDelay = (i*0.1) + 's';
 					xPlane.position();
 					myPlanes.push( xPlane );
 
 					var zPlane = new Plane('z', (i/k));
 					zPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+					zPlane.canvas.style.animationDelay = (i*0.1) + 's';
 					zPlane.position();
 					myPlanes.push( zPlane );
 				}
@@ -183,6 +190,44 @@ var 	programs = {},
 		},*/
 
 		{
+
+			name: 'circle-y',
+			fill: 'rgba(255,255,255,0)',
+			stroke: 'rgba(255,255,255,1)',
+
+			init: function() {
+
+				rotateYAccel = 2.25;
+
+				var k = 64;
+				for( var i=0; i<k;i++ ) {
+
+					var xPlane = new Plane('z', (i/k));
+					xPlane.isFixed = false;
+					
+					xPlane.transform.rotateY = 0;//(i/k);
+					xPlane.transform.scale = 1.1;
+					xPlane.canvas.style.webkitAnimationDelay = (i*0.025) + 's';
+					xPlane.canvas.style.animationDelay = (i*0.025) + 's';
+					xPlane.position();
+					myPlanes.push( xPlane );
+				}
+			},
+
+			loop: function() {
+
+				if( rotateYAccel > 0.5 ) {
+					rotateYAccel *= 0.99;
+				}
+
+				for(var i=0; i<myPlanes.length; i++) {
+					myPlanes[i].transform.rotateY += myPlanes[i].index * rotateYAccel;
+					myPlanes[i].position();
+				}
+			}
+		},
+
+		{
 			name: 'wave',
 			fill: 'rgba(255,255,255,0.25)',
 			stroke: 'rgba(255,255,255,0)',
@@ -209,6 +254,41 @@ var 	programs = {},
 				}
 			}
 		},
+
+
+
+		{
+
+			name: 'circle-x',
+			fill: 'rgba(255,255,255,0)',
+			stroke: 'rgba(255,255,255,1)',
+
+			init: function() {
+
+				//targetTransform = new Vector(-24, 137);
+
+				var k = 32;
+				for( var i=0; i<k;i++ ) {
+
+					var xPlane = new Plane('y', (i/k));
+					xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
+					xPlane.canvas.style.animationDelay = (i*0.1) + 's';
+					xPlane.isFixed = false;
+					xPlane.transform.rotateX = -230 + ((i/k) * 360);
+					xPlane.position();
+					myPlanes.push( xPlane );
+				}
+			},
+
+			loop: function() {
+
+				for(var i=0; i<myPlanes.length; i++) {
+					//myPlanes[i].transform.rotateX += myPlanes[i].index;
+					myPlanes[i].transform.rotateX += 0.5;
+					myPlanes[i].position();
+				}
+			}
+		}
 		
 		
 
@@ -270,74 +350,7 @@ var 	programs = {},
 			}
 		},*/
 
-		{
-
-			name: 'circle-x',
-			fill: 'rgba(255,255,255,0)',
-			stroke: 'rgba(255,255,255,1)',
-
-			init: function() {
-
-				//targetTransform = new Vector(-24, 137);
-
-				var k = 32;
-				for( var i=0; i<k;i++ ) {
-
-					var xPlane = new Plane('y', (i/k));
-					xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
-					xPlane.isFixed = false;
-					xPlane.transform.rotateX = -230 + ((i/k) * 360);
-					xPlane.position();
-					myPlanes.push( xPlane );
-				}
-			},
-
-			loop: function() {
-
-				for(var i=0; i<myPlanes.length; i++) {
-					//myPlanes[i].transform.rotateX += myPlanes[i].index;
-					myPlanes[i].transform.rotateX += 0.5;
-					myPlanes[i].position();
-				}
-			}
-		}, 
-
-		{
-
-			name: 'circle-y',
-			fill: 'rgba(255,255,255,0)',
-			stroke: 'rgba(255,255,255,1)',
-
-			init: function() {
-
-				rotateYAccel = 2.25;
-
-				var k = 64;
-				for( var i=0; i<k;i++ ) {
-
-					var xPlane = new Plane('z', (i/k));
-					xPlane.isFixed = false;
-					
-					xPlane.transform.rotateY = 0;//(i/k);
-					xPlane.transform.scale = 1.1;
-					xPlane.canvas.style.webkitAnimationDelay = (i*0.025) + 's';
-					xPlane.position();
-					myPlanes.push( xPlane );
-				}
-			},
-
-			loop: function() {
-
-				if( rotateYAccel > 0.5 ) {
-					rotateYAccel *= 0.99;
-				}
-
-				for(var i=0; i<myPlanes.length; i++) {
-					myPlanes[i].transform.rotateY += myPlanes[i].index * rotateYAccel;
-					myPlanes[i].position();
-				}
-			}
-		}
+		
 	];
 
 

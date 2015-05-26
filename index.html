@@ -12,104 +12,6 @@
 
 	<script>(function(h){h.className = h.className.replace('no-js', 'js')})(document.documentElement)</script>
 
-<style>
-	body {
-		margin: 20px;
-		text-align: center;
-		background: black;
-		overflow: hidden;
-	}
-	/*canvas {
-		display: inline;
-		border: 1px solid #ccc;
-		margin: 20px;
-	}*/
-
-	#graph {
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		width: 1px;
-		height: 1px;
-		/*border: 1px solid green;*/
-		transform: perspective(700px) rotateX(45deg);
-		transform-style: preserve-3d;
-	}
-
-	#graph canvas {
-		position: absolute;
-		top: 0;
-		left: 0;
-		/*border: 1px solid rgba(255,255,255,0.8);*/
-
-		/*transform-origin: right center;*/
-		/*transition: opacity 0.5s;*/
-	}
-
-	.echo canvas {
-		opacity: 0;
-		-webkit-animation: echo 3s infinite;
-	}
-
-	@-webkit-keyframes echo {
-		0% {
-			opacity: 0;
-		}
-		33% {
-			opacity: 1;
-		}
-		100% {
-			opacity: 0;
-		}
-	}
-
-	.grid canvas {
-		opacity: 0;
-		-webkit-animation: echo 4s infinite;
-	}
-
-	.circle-x canvas,
-	.circle-y canvas,
-	.wave canvas,
-	.vertigo canvas {
-		opacity: 0;
-		-webkit-animation: fade-in 4s 1 forwards;
-	}
-
-	@-webkit-keyframes fade-in {
-		0% {
-			opacity: 0;
-		}
-		100% {
-			opacity: 1;
-		}
-	}
-
-	.scan canvas {
-		border: 1px solid rgba(255,255,255,0.25);
-	}
-
-	#ctrl {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		background: black;
-		overflow: hidden;
-		padding: 4px;
-		font-size: 10px;
-		line-height: 24px;
-		color: white;
-		text-transform: uppercase;
-	}
-	#ctrl * {
-		float: left;
-		margin-right: 10px;
-	}
-	#ctrl .active {
-		text-decoration: underline;
-	}
-</style>
 
 </head>
 <body>
@@ -117,7 +19,7 @@
 	<div id="graph"></div>
 
 	<div id="ctrl">
-		<input type="checkbox" id="ctrl_mouse" title="enable mouse" />
+		<div id="ctrl_mouse">[mouse]</div>
 		<ul id="ctrl_program"></ul>
 	</div>
 
