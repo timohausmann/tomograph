@@ -5,12 +5,13 @@ var 	programs = {},
 		//samples = 256,
 		mouseEnabled = false,
 		$graph = document.querySelector('#graph'),
+		$ctrl = document.querySelector('#ctrl'),
 		graphSize = 800,
 
 		realWidth = 1040,
 		realDepth = 1070,
 		realHeight = 460,
-		scale = 0.75,
+		scale = 0.6,
 
 		mouseRangeX = 180,
 		mouseRangeY = 45,
@@ -26,10 +27,14 @@ var 	programs = {},
 			z: [-60,120]
 		},
 
+		isAutorun = true,
+		timeout = 15000,
+		nextTimeout = null,
+
 		winWidth = window.innerWidth,
 		winHeight = window.innerHeight,
 
-		currentTransform = new Vector(-24, 120);
+		currentTransform = new Vector(-24, 120),
 		targetTransform = new Vector(-24, 137);
 
 		//$graph.style.width = graphWidth;
@@ -53,19 +58,30 @@ var 	programs = {},
 				this.classList.remove('active');
 			}
 		});
+		document.querySelector('#ctrl_autorun').addEventListener('click', function() {
+			isAutorun = !isAutorun;
+			if( isAutorun ) {
+				next();
+				document.querySelector('#ctrl_program').classList.add('autorun');
+				this.classList.add('active');
+			} else {
+				window.clearTimeout(nextTimeout);
+				document.querySelector('#ctrl_program').classList.remove('autorun');
+				this.classList.remove('active');
+			}
+		});
 
 		for(var i=0; i<programs.length; i++ ) {
 
 			var li = document.createElement('li');
 			li.setAttribute('id', programs[i].name);
+			li.dataset.index = i;
 			li.innerHTML = programs[i].name;
+
+			li.addEventListener('click', handleProgramCLick);
 
 			document.querySelector('#ctrl_program').appendChild(li);
 		}
-		
-
-		
-
 
 		
 		next();
@@ -74,6 +90,8 @@ var 	programs = {},
 
 
 	function next() {
+
+		var 
 
 		myPlanes = [];
 		$graph.innerHTML = '';
@@ -92,7 +110,7 @@ var 	programs = {},
 		activeIndex += 1;
 		if( activeIndex > programs.length - 1 ) activeIndex = 0;
 
-		window.setTimeout(next, 15000);
+		nextTimeout = window.setTimeout(next, timeout);
 	}
 
 
@@ -154,41 +172,6 @@ var 	programs = {},
 			}
 		},
 
-		/*{
-
-			name: 'scan',
-			fill: 'rgba(255,255,255,1)',
-			stroke: 'rgba(255,255,255,1)',
-
-			init: function() {
-
-				var k = 1;
-				for(var i=0; i<k; i++) {
-					var xPlane = new Plane('x', i/k);
-					xPlane.position();
-					myPlanes.push( xPlane );
-
-					var yPlane = new Plane('y', i/k);
-					yPlane.position();
-					myPlanes.push( yPlane );
-
-					var zPlane = new Plane('z', i/k);
-					zPlane.position();
-					myPlanes.push( zPlane );
-				}
-			},
-
-			loop: function() {
-
-				for(var i=0; i<myPlanes.length; i++) {
-
-					myPlanes[i].index += 0.001;
-					myPlanes[i].position();
-					if( myPlanes[i].index > 1 ) myPlanes[i].index = 0;
-				}
-			}
-		},*/
-
 		{
 
 			name: 'circle-y',
@@ -199,13 +182,13 @@ var 	programs = {},
 
 				rotateYAccel = 2.25;
 
-				var k = 64;
+				var k = 48;
 				for( var i=0; i<k;i++ ) {
 
 					var xPlane = new Plane('z', (i/k));
 					xPlane.isFixed = false;
 					
-					xPlane.transform.rotateY = 0;//(i/k);
+					xPlane.transform.rotateY = (i/k) * 90;
 					xPlane.transform.scale = 1.1;
 					xPlane.canvas.style.webkitAnimationDelay = (i*0.025) + 's';
 					xPlane.canvas.style.animationDelay = (i*0.025) + 's';
@@ -216,8 +199,8 @@ var 	programs = {},
 
 			loop: function() {
 
-				if( rotateYAccel > 0.5 ) {
-					rotateYAccel *= 0.99;
+				if( rotateYAccel > 0.25 ) {
+					rotateYAccel *= 0.97;
 				}
 
 				for(var i=0; i<myPlanes.length; i++) {
@@ -249,7 +232,7 @@ var 	programs = {},
 
 				for(var i=0; i<myPlanes.length; i++) {
 
-					myPlanes[i].transform.rotateZ -= (myPlanes[i].index-0.5) * 0.25;
+					myPlanes[i].transform.rotateZ -= (myPlanes[i].index-0.5) * 0.1;
 					myPlanes[i].position();
 				}
 			}
@@ -289,6 +272,43 @@ var 	programs = {},
 				}
 			}
 		}
+
+
+
+		/*{
+
+			name: 'scan',
+			fill: 'rgba(255,255,255,1)',
+			stroke: 'rgba(255,255,255,1)',
+
+			init: function() {
+
+				var k = 1;
+				for(var i=0; i<k; i++) {
+					var xPlane = new Plane('x', i/k);
+					xPlane.position();
+					myPlanes.push( xPlane );
+
+					var yPlane = new Plane('y', i/k);
+					yPlane.position();
+					myPlanes.push( yPlane );
+
+					var zPlane = new Plane('z', i/k);
+					zPlane.position();
+					myPlanes.push( zPlane );
+				}
+			},
+
+			loop: function() {
+
+				for(var i=0; i<myPlanes.length; i++) {
+
+					myPlanes[i].index += 0.001;
+					myPlanes[i].position();
+					if( myPlanes[i].index > 1 ) myPlanes[i].index = 0;
+				}
+			}
+		},*/
 		
 		
 
@@ -360,7 +380,16 @@ var 	programs = {},
 
 
 
+	function handleProgramCLick() {
 
+			document.querySelector('#ctrl li.active').classList.remove('active');
+			this.classList.add('active');
+				
+			window.clearTimeout(nextTimeout);
+			activeIndex = this.dataset.index;
+			activeProgram.name = programs[activeIndex].name; //dangerously hacky!!11
+			next();
+		}
 
 
 
