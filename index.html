@@ -68,6 +68,23 @@
 		-webkit-animation: echo 4s infinite;
 	}
 
+	.circle-x canvas,
+	.circle-y canvas,
+	.wave canvas,
+	.vertigo canvas {
+		opacity: 0;
+		-webkit-animation: fade-in 4s 1 forwards;
+	}
+
+	@-webkit-keyframes fade-in {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
 	.scan canvas {
 		border: 1px solid rgba(255,255,255,0.25);
 	}
