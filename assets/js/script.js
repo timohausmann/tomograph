@@ -389,6 +389,8 @@ var 	programs = {},
 
 			document.querySelector('#ctrl li.active').classList.remove('active');
 			this.classList.add('active');
+
+			$graph.classList.remove( activeProgram.name ); //this has to happen before activeProgram gets replaced .... so it happens here additionally to inside next()
 				
 			window.clearTimeout(nextTimeout);
 			activeIndex = this.dataset.index;
