@@ -276,11 +276,11 @@ var 	programs = {},
 					myPlanes[i].position();
 				}
 			}
-		}
+		},
 
 
 
-		/*{
+		{
 
 			name: 'scan',
 			fill: 'rgba(255,255,255,1)',
@@ -313,7 +313,7 @@ var 	programs = {},
 					if( myPlanes[i].index > 1 ) myPlanes[i].index = 0;
 				}
 			}
-		},*/
+		},
 		
 		
 
