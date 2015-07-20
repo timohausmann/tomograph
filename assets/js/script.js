@@ -15,6 +15,7 @@ var 	programs = {},
 
 		mouseRangeX = 180,
 		mouseRangeY = 45,
+		mouseFixY = 0,
 
 		graphWidth = realWidth * scale,
 		graphDepth = realDepth * scale,
@@ -30,17 +31,13 @@ var 	programs = {},
 		isAutorun = true,
 		timeout = 15000,
 		nextTimeout = null,
+		lastLoop = new Date(),
 
 		winWidth = window.innerWidth,
 		winHeight = window.innerHeight,
 
 		currentTransform = new Vector(-24, 120),
 		targetTransform = new Vector(-24, 137);
-
-		//$graph.style.width = graphWidth;
-		//$graph.style.height = graphDepth;
-		//$graph.style.marginLeft = -(graphWidth/2);
-		//$graph.style.marginTop = -(graphDepth/2);
 ;
 
 		
@@ -56,10 +53,11 @@ var 	programs = {},
 			var delta = e.detail ? e.detail : -e.wheelDelta/120;
 			zoom += delta/10;
 		}*/
-		//window.onscroll = ;
+
 		document.querySelector('#ctrl_mouse').addEventListener('click', function() {
 			mouseEnabled = !mouseEnabled;
 			if( mouseEnabled ) {
+				mouseFixY = Math.floor( targetTransform.y / 180) * 180;
 				this.classList.add('active');
 			} else {
 				this.classList.remove('active');
@@ -68,7 +66,7 @@ var 	programs = {},
 		document.querySelector('#ctrl_autorun').addEventListener('click', function() {
 			isAutorun = !isAutorun;
 			if( isAutorun ) {
-				next();
+				nextTimeout = window.setTimeout(next, timeout);
 				document.querySelector('#ctrl_program').classList.add('autorun');
 				this.classList.add('active');
 			} else {
@@ -85,7 +83,7 @@ var 	programs = {},
 			li.dataset.index = i;
 			li.innerHTML = programs[i].name;
 
-			li.addEventListener('click', handleProgramCLick);
+			li.addEventListener('click', handleProgramClick);
 
 			document.querySelector('#ctrl_program').appendChild(li);
 		}
@@ -126,7 +124,7 @@ var 	programs = {},
 
 		{
 			name: 'echo',
-			fill: 'rgba(255,255,255,0.25)',
+			fill: 'rgba(255,255,255,0.5)',
 			stroke: 'rgba(255,255,255,0)',
 
 			init: function() {
@@ -185,7 +183,7 @@ var 	programs = {},
 
 			init: function() {
 
-				rotateYAccel = 2.25;
+				//rotateYAccel = 2.25;
 
 				var k = 48;
 				for( var i=0; i<k;i++ ) {
@@ -193,7 +191,7 @@ var 	programs = {},
 					var xPlane = new Plane('z', (i/k));
 					xPlane.isFixed = false;
 					
-					xPlane.transform.rotateY = (i/k) * 90;
+					xPlane.transform.rotateY = (i/k) * 206;
 					xPlane.transform.scale = 1.1;
 					xPlane.canvas.style.webkitAnimationDelay = (i*0.025) + 's';
 					xPlane.canvas.style.animationDelay = (i*0.025) + 's';
@@ -204,46 +202,44 @@ var 	programs = {},
 
 			loop: function() {
 
-				if( rotateYAccel > 0.25 ) {
+				/*if( rotateYAccel > 0.25 ) {
 					rotateYAccel *= 0.97;
 				}
 
 				for(var i=0; i<myPlanes.length; i++) {
 					myPlanes[i].transform.rotateY += myPlanes[i].index * rotateYAccel;
 					myPlanes[i].position();
-				}
+				}*/
 			}
 		},
 
 		{
 			name: 'wave',
-			fill: 'rgba(255,255,255,0.25)',
+			fill: 'rgba(255,255,255,0.5)',
 			stroke: 'rgba(255,255,255,0)',
-			duration: 4000,
 
 			init: function() {
 
-				var k = 42;
+				var k = 38;
 				for( var i=0; i<k;i++ ) {
 
 					var xPlane = new Plane('x', (i/k));
-					xPlane.transform.rotateZ = ((i/k)-0.5) * 30;
+					xPlane.transform.rotateY = 90;
+					xPlane.transform.rotateZ = ((i/k)-0.5) * 48;
 					xPlane.position();
 					myPlanes.push( xPlane );
 				}
 			},
 
-			loop: function() {
+			loop: function(delta) {
 
 				for(var i=0; i<myPlanes.length; i++) {
 
-					myPlanes[i].transform.rotateZ -= (myPlanes[i].index-0.5) * 0.1;
+					myPlanes[i].transform.rotateZ -= (myPlanes[i].index-0.5) * delta * 8;
 					myPlanes[i].position();
 				}
 			}
 		},
-
-
 
 		{
 
@@ -253,15 +249,14 @@ var 	programs = {},
 
 			init: function() {
 
-				//targetTransform = new Vector(-24, 137);
-
-				var k = 32;
+				var k = 48;
 				for( var i=0; i<k;i++ ) {
 
 					var xPlane = new Plane('y', (i/k));
 					xPlane.canvas.style.webkitAnimationDelay = (i*0.1) + 's';
 					xPlane.canvas.style.animationDelay = (i*0.1) + 's';
 					xPlane.isFixed = false;
+					xPlane.transform.translateZ = -50;
 					xPlane.transform.rotateX = -230 + ((i/k) * 360);
 					xPlane.position();
 					myPlanes.push( xPlane );
@@ -270,15 +265,13 @@ var 	programs = {},
 
 			loop: function() {
 
-				for(var i=0; i<myPlanes.length; i++) {
+				/*for(var i=0; i<myPlanes.length; i++) {
 					//myPlanes[i].transform.rotateX += myPlanes[i].index;
 					myPlanes[i].transform.rotateX += 0.5;
 					myPlanes[i].position();
-				}
+				}*/
 			}
 		},
-
-
 
 		{
 
@@ -288,23 +281,21 @@ var 	programs = {},
 
 			init: function() {
 
-				var k = 1;
-				for(var i=0; i<k; i++) {
-					var xPlane = new Plane('x', i/k);
-					xPlane.position();
-					myPlanes.push( xPlane );
+				var xPlane = new Plane('x', 0);
+				xPlane.position();
+				myPlanes.push( xPlane );
 
-					var yPlane = new Plane('y', i/k);
-					yPlane.position();
-					myPlanes.push( yPlane );
+				var yPlane = new Plane('y', 0);
+				yPlane.position();
+				myPlanes.push( yPlane );
 
-					var zPlane = new Plane('z', i/k);
-					zPlane.position();
-					myPlanes.push( zPlane );
-				}
+				var zPlane = new Plane('z', 0);
+				zPlane.position();
+				myPlanes.push( zPlane );
+
 			},
 
-			loop: function() {
+			loop: function(delta) {
 
 				for(var i=0; i<myPlanes.length; i++) {
 
@@ -313,7 +304,7 @@ var 	programs = {},
 					if( myPlanes[i].index > 1 ) myPlanes[i].index = 0;
 				}
 			}
-		},
+		}
 		
 		
 
@@ -379,26 +370,28 @@ var 	programs = {},
 	];
 
 
+	function handleProgramClick() {
 
+		myPlanes = [];
+		$graph.innerHTML = '';
+		
+		$graph.classList.remove( activeProgram.name );
+		document.querySelector('#' + activeProgram.name).classList.remove('active');
+		
+		activeIndex = parseInt(this.dataset.index);
+		activeProgram = programs[activeIndex];
+		activeProgram.init();
 
+		this.classList.add('active');
+		$graph.classList.add( activeProgram.name );
 
+		window.clearTimeout(nextTimeout);
 
-
-
-	function handleProgramCLick() {
-
-			document.querySelector('#ctrl li.active').classList.remove('active');
-			this.classList.add('active');
-
-			$graph.classList.remove( activeProgram.name ); //this has to happen before activeProgram gets replaced .... so it happens here additionally to inside next()
-				
-			window.clearTimeout(nextTimeout);
-			activeIndex = this.dataset.index;
-			activeProgram.name = programs[activeIndex].name; //dangerously hacky!!11
-			next();
+		if( isAutorun ) {
+			activeIndex++;
+			nextTimeout = window.setTimeout(next, timeout);
 		}
-
-
+	}
 
 
 	function handleMousemove(e) {
@@ -415,7 +408,7 @@ var 	programs = {},
 			rotationY = -(offsetX*mouseRangeX).toFixed(2);
 
 		targetTransform.x = rotationX;
-		targetTransform.y = rotationY;
+		targetTransform.y = mouseFixY + rotationY;
 	}
 
 	
@@ -449,45 +442,23 @@ var 	programs = {},
 			cssTransform += key + '(' + transform[key] + ') ';
 		}
 		$graph.style.transform = cssTransform;
-
-/*
-		i += 0.5;
-		if( i > samples ) i = 0;
-
-		xPlane.position(i);
-		yPlane.position(i);
-		zPlane.position(i);*/
-
-/*
-		var x = dataRange.x[0] + ((i/k) * dataRange.x[1]);
-		var y = dataRange.y[0] + ((i/k) * dataRange.y[1]);
-		var z = dataRange.z[0] + ((i/k) * dataRange.z[1]);
-		
-		xPlane.x = x;
-		yPlane.y = y;
-		zPlane.z = z;
-		
-		xPlane.scan();xPlane.draw();
-		yPlane.scan();yPlane.draw();
-		//zPlane.scan();zPlane.draw();
-
-		xPlane.canvas.style.transform = "rotateX(90deg) translateY("+ graphHeight / 1.5 +"px) translateZ(" + ((i-(k/2))/k)*-graphWidth + "px)";
-		yPlane.canvas.style.transform = "translateZ(" + ((i-(k/2))/k)*graphHeight + "px)";
-		zPlane.canvas.style.transform = "rotateY(90deg) translateX("+ graphHeight / 1.5 +"px) translateZ(" + ((i-(k/2))/k)*graphDepth + "px)";
-
-		i += 0.5;
-		if( i > k ) i = 0;
-*/
 	}
+
 
 	function loop() {
 
+		var currLoop = new Date(),
+			delta = (currLoop - lastLoop)/1000;
+
+
 		if( typeof activeProgram.loop === 'function' ) {
-			activeProgram.loop();
+			activeProgram.loop(delta);
 		}
 
 		updateCardTransform();
 		window.requestAnimationFrame( loop );
+
+		lastLoop = currLoop;
 	}
 
 
